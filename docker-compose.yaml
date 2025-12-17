@@ -1,0 +1,14 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=change-me-123
+      - MSSQL_PID=Express
+      - MSSQL_COLLATION=Japanese_CI_AS
+      - LANG=ja_JP.UTF-8
+      - LC_ALL=ja_JP.UTF-8
+      - TZ=Asia/Tokyo
+    ports:
+      - 1433:1433
