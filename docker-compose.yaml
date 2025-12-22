@@ -1,14 +1,11 @@
 services:
-  mssql:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: mssql
+  test-db:
+    image: postgres:18.1
+    container_name: test-db
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=change-me-123
-      - MSSQL_PID=Express
-      - MSSQL_COLLATION=Japanese_CI_AS
-      - LANG=ja_JP.UTF-8
-      - LC_ALL=ja_JP.UTF-8
-      - TZ=Asia/Tokyo
+      - POSTGRES_PASSWORD=change-me
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=sample_db
+    tmpfs: /var/lib/postgresql
     ports:
-      - 1433:1433
+      - 5432:5432
