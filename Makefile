@@ -15,9 +15,9 @@ stop:
 	@podman compose down
 
 .PHONY: restart
-restart: stop-db start-db
+restart: stop start
 
-.PHONY: connect-db
+.PHONY: connect
 connect:
 	@${SQLCMD}
 
