@@ -1,26 +1,17 @@
-use sample_db
-go
+\c sample_db;
 
-drop table if exists find_product
-go
-
-create function find_product
+create or replace function find_product
 (
-    @price int
+    p_price integer
 )
-returns @result table
+returns table
 (
     id int,
-    name nvarchar(100),
+    name text,
     price int
 )
-as
-begin
-    insert into @result
+as $$
     select id, name, price
     from product
-    where price >= @price
-
-    return
-end
-go
+    where price >= p_price
+$$ language sql;

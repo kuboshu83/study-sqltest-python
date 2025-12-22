@@ -1,8 +1,9 @@
-PASSWORD = change-me-123
+PASSWORD = change-me
 USER = sa
-CONTAINER = mssql
-SQLCMD = podman exec -it ${CONTAINER} /opt/mssql-tools18/bin/sqlcmd -U ${USER} -P ${PASSWORD} -C 
-RUNSQL = podman exec ${CONTAINER} /opt/mssql-tools18/bin/sqlcmd -U ${USER} -P ${PASSWORD} -C -i
+CONTAINER = test-db
+DBNAME = postgres
+SQLCMD = podman exec -it ${CONTAINER} psql -h localhost -p 5432 -U ${USER} -d ${DBNAME}
+RUNSQL = podman exec ${CONTAINER} psql -h localhost -p 5432 -U ${USER} -d ${DBNAME} -f
 CP = podman cp
 
 .PHONY: start
