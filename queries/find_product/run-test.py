@@ -12,7 +12,7 @@ class ProductEntity:
 
 
 class ProductRepository:
-    def __init__(self, repository: sqltest.Repository):
+    def __init__(self, connection_string: str):
         self._repository = sqltest.Repository(connection_string)
     
     def get_all(self) -> List[ProductEntity]:
