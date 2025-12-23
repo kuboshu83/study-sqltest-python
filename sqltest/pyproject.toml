@@ -1,0 +1,15 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sqltest"
+version = "1.0.0"
+authors = [
+    { name="kuboshu83", email="kuboshu83@example.com" }
+]
+description = "A simple SQL testing library."
+readme = "README.md"
+dependencies = [
+    "psycopg-binary==3.2.13"
+]

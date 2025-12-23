@@ -28,3 +28,6 @@ arrange:
 	@${RUNSQL} /tmp/data.sql
 	@${RUNSQL} /tmp/target.sql
 
+.PHONY: test
+test:
+	@python3 ./run-test.py
