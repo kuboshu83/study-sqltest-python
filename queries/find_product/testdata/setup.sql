@@ -1,8 +1,3 @@
-drop database if exists sample_db;
-create database sample_db;
-
-\c sample_db;
-
 drop table if exists product;
 create table product (
     id integer primary key,

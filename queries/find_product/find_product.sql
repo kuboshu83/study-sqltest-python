@@ -1,5 +1,3 @@
-\c sample_db;
-
 create or replace function find_product
 (
     p_price integer
