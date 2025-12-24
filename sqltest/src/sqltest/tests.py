@@ -28,16 +28,16 @@ class ConnectionStringBuilder:
         return ConnectionStringBuilder(database, user, password, host, port).to_string()
 
 
-class Repository:
-    def __init__(self, connection_string: str):
-        self.__connection_string = connection_string
+class SqlExecutor:
+    def __init__(self, database_name: str):
+        self._connection_string = ConnectionStringBuilder.connection_string(database_name)
 
     def execute_query(self, query: str) -> List[Any]:
         """
         レコードを検索して、その結果の配列を返します。
         """
         records = []
-        with psycopg.connect(self.__connection_string) as connection:
+        with psycopg.connect(self._connection_string) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query)
                 for record in cursor.fetchall():
@@ -46,18 +46,33 @@ class Repository:
 
     def execute_nonquery(self, query: str):
         """
-        テーブルに対して副作用を伴う操作を行う。
+        副作用を伴う操作を行う。
         """
-        with psycopg.connect(self.__connection_string) as connection:
+        with psycopg.connect(self._connection_string) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query)
 
 
-class Assersion:
-    @classmethod
-    def fail(cls, message: str):
-        print(f"\u001b[31mFAIL\u001b[0m: {message}")
+    def execute_nonquery_with_autocommit(self, query: str):
+        """
+        AutoCommitを有効にして、副作用を伴う操作を行う。
+        """
+        with psycopg.connect(self._connection_string, autocommit=True) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(query)
+        
 
-    @classmethod
-    def ok(cls):
-        print(f"\u001b[32mOK\u001b")
+
+class SqlFileExecutor:
+    def __init__(self, database_name: str):
+        self._connection_string = ConnectionStringBuilder.connection_string(database_name)
+
+    def execute_sqlfile(self, sqlfile: str):
+        """
+        SQLファイルを読み込んで実行する。
+        """
+        with open(file=sqlfile, mode="r", encoding="utf-8") as f:
+            sql = f.read().replace("\n", "")
+            with psycopg.connect(self._connection_string) as connection:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql)
