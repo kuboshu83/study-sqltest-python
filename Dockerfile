@@ -1,6 +1,6 @@
 FROM python:3.14.2-alpine
 
 COPY ./sqltest/ /root/sqltest/
-RUN pip install pytest 
+RUN pip install pytest && pip install /root/sqltest
 
 CMD ["ash"]
