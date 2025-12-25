@@ -88,3 +88,92 @@ create table score (
     score integer not null
 );
 ```
+
+# テスト例
+
+sqltestを使用したテストのサンプルコードを紹介します。
+サンプルはpytestを使用したものとなります。
+
+```python
+import sqltest
+
+SETUP_QUERY = """
+create table student (
+    id integer primary key,
+    name text not null
+);
+
+create table subject (
+    id integer primary key,
+    name text not null
+);
+
+create table test (
+    id integer primary key,
+    name text not null
+);
+
+create table score (
+    student_id integer not null,
+    subject_id integer not null,
+    test_id integer not null,
+    score integer not null,
+    primary key (student_id, subject_id, test_id)
+);
+
+insert into student
+    (id, name)
+values
+    (1, 'tanaka'),
+    (2, 'sato');
+
+insert into subject
+    (id, name)
+values
+    (1, '数学'),
+    (2, '物理');
+
+insert into test
+    (id, name)
+values
+    (1, '中間考査'),
+    (2, '期末考査');
+
+insert into score
+    (student_id, subject_id, test_id, score)
+values
+    (1, 1, 1, 89),
+    (1, 2, 1, 97),
+    (2, 1, 1, 100),
+    (2, 2, 1, 79);
+"""
+
+class TestQuery:
+    sample_db = sqltest.Database("sample_db")
+
+    @classmethod
+    def setup_class(cls):
+        cls.sample_db.create()
+        cls.sample_db.run_nonquery(SETUP_SQL)
+
+    @classmethod
+    def teardown_class(cls):
+        cls.sample_db.drop()
+
+    def test_average(self):
+        # arrange
+        target_sql = """
+        select
+            avg(score) as average
+        from
+            (select score from score where student_id=1)
+        """
+
+        # act
+        result = self.sample_db.run_query(target_sql)
+
+        # assert
+        expected = 93
+        actual = result[0]
+        assert expected == actual
+```
