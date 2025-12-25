@@ -9,3 +9,18 @@ services:
     tmpfs: /var/lib/postgresql
     ports:
       - 5432:5432
+    networks:
+      - test-nw
+
+  test-py:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: localhost/test-py:3.14.2
+    container_name: test-py
+    tty: true
+    networks:
+      - test-nw
+
+networks:
+  test-nw:
