@@ -13,24 +13,48 @@ class ConnectionStringBuilder:
         return f"dbname={self._database} user={self._user} password={self._password} host={self._host} port={self._port}"
 
     @classmethod
-    def connection_string(cls, database: str):
+    def connection_string_of(cls, database: str):
         """
         user = "sa"
         password = "change-me"
-        host = "localhost"
+        host = "test-db"
         port = 5432
         の接続用文字列を生成します。
         """
         user = "sa"
         password = "change-me"
-        host = "localhost"
+        host = "test-db"
         port = 5432
         return ConnectionStringBuilder(database, user, password, host, port).to_string()
 
 
+class Database:
+
+    def __init__(self, database: str):
+        self._database = database
+        self._sql_executor = SqlExecutor(database)
+        self._sqlfile_executor = SqlFileExecutor(database)
+    
+    def create(self):
+        self.drop()
+        SqlExecutor("postgres").execute_nonquery_with_autocommit(f"create database {self._database}")
+
+    def drop(self):
+        SqlExecutor("postgres").execute_nonquery_with_autocommit(f"drop database if exists {self._database}")
+
+    def run_query(self, sql: str) -> List[Any]:
+        return self._sql_executor.execute_query(sql)
+    
+    def run_nonquery(self, sql: str):
+        self._sql_executor.execute_nonquery(sql)
+
+    def run_nonquery_from(self, sqlfile: str):
+        self._sqlfile_executor.execute_sqlfile(sqlfile)
+
+
 class SqlExecutor:
     def __init__(self, database_name: str):
-        self._connection_string = ConnectionStringBuilder.connection_string(database_name)
+        self._connection_string = ConnectionStringBuilder.connection_string_of(database_name)
 
     def execute_query(self, query: str) -> List[Any]:
         """
@@ -52,7 +76,6 @@ class SqlExecutor:
             with connection.cursor() as cursor:
                 cursor.execute(query)
 
-
     def execute_nonquery_with_autocommit(self, query: str):
         """
         AutoCommitを有効にして、副作用を伴う操作を行う。
@@ -62,10 +85,9 @@ class SqlExecutor:
                 cursor.execute(query)
         
 
-
 class SqlFileExecutor:
     def __init__(self, database_name: str):
-        self._connection_string = ConnectionStringBuilder.connection_string(database_name)
+        self._connection_string = ConnectionStringBuilder.connection_string_of(database_name)
 
     def execute_sqlfile(self, sqlfile: str):
         """
