@@ -5,7 +5,7 @@ PostgresSQLに接続してクエリを実行するための基本的なコード
 
 - パスワード: change-me
 - ユーザ: sa
-- ホスト: localhost
+- ホスト: test-db
 - ポート: 5432
 
 また、デフォルトで"postgres"というデータベースが用意されています。
@@ -154,7 +154,7 @@ class TestQuery:
     @classmethod
     def setup_class(cls):
         cls.sample_db.create()
-        cls.sample_db.run_nonquery(SETUP_SQL)
+        cls.sample_db.run_nonquery(SETUP_QUERY)
 
     @classmethod
     def teardown_class(cls):
@@ -174,6 +174,6 @@ class TestQuery:
 
         # assert
         expected = 93
-        actual = result[0]
+        actual = result[0][0]
         assert expected == actual
 ```
